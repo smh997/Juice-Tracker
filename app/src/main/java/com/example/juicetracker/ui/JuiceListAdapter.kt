@@ -16,10 +16,22 @@
 package com.example.juicetracker.ui
 
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.Icon
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.juicetracker.R
 import com.example.juicetracker.data.Juice
 import com.example.juicetracker.data.JuiceColor
 
@@ -53,6 +65,43 @@ class JuiceListAdapter(
     }
 }
 
+@Composable
+fun ListItem(
+    input: Juice,
+    onDelete: (Juice) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    
+}
+
+@Composable
+fun JuiceIcon(
+    color: String,
+    modifier: Modifier = Modifier
+) {
+    val colorLabelMap = JuiceColor.entries.associateBy { stringResource(it.label) }
+    val selectedColor = colorLabelMap[color]?.let { Color(it.color) }
+    val juiceIconContentDescription = stringResource(R.string.juice_color, color)
+
+    Box (
+        modifier.semantics {
+            contentDescription = juiceIconContentDescription
+        }
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_juice_color),
+            contentDescription = null,
+            tint = selectedColor ?: Color.Red,
+            modifier = Modifier.align(Alignment.Center)
+        )
+        Icon(
+            painter = painterResource(R.drawable.ic_juice_clear),
+            contentDescription = null,
+        )
+    }
+
+}
+
 class JuiceDiffCallback : DiffUtil.ItemCallback<Juice>() {
     override fun areItemsTheSame(oldItem: Juice, newItem: Juice): Boolean {
         return oldItem.id == newItem.id
@@ -61,4 +110,10 @@ class JuiceDiffCallback : DiffUtil.ItemCallback<Juice>() {
     override fun areContentsTheSame(oldItem: Juice, newItem: Juice): Boolean {
         return oldItem == newItem
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewJuiceIcon() {
+    JuiceIcon("Yellow")
 }
