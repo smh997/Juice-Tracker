@@ -16,18 +16,29 @@
 package com.example.juicetracker.ui
 
 import android.view.ViewGroup
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -102,6 +113,43 @@ fun JuiceIcon(
 
 }
 
+@Composable
+fun JuiceDetails(
+    juice: Juice,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier, verticalArrangement = Arrangement.Top
+    ) {
+        Text(
+            text = juice.name,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+        Text(juice.description)
+        RatingDisplay(rating = juice.rating, modifier = Modifier.padding(top = 8.dp))
+    }
+}
+
+@Composable
+fun RatingDisplay(rating: Int, modifier: Modifier) {
+    val displayDescription = pluralStringResource(R.plurals.number_of_stars, count = rating)
+    Row(
+        modifier.semantics {
+            contentDescription = displayDescription
+        }
+    ) {
+        repeat(rating) {
+            Image(
+                painter = painterResource(R.drawable.star),
+                contentDescription = null,
+                modifier = Modifier.size(32.dp)
+            )
+        }
+    }
+}
+
+
 class JuiceDiffCallback : DiffUtil.ItemCallback<Juice>() {
     override fun areItemsTheSame(oldItem: Juice, newItem: Juice): Boolean {
         return oldItem.id == newItem.id
@@ -116,4 +164,18 @@ class JuiceDiffCallback : DiffUtil.ItemCallback<Juice>() {
 @Composable
 fun PreviewJuiceIcon() {
     JuiceIcon("Yellow")
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewJuiceDetails() {
+    JuiceDetails(
+        Juice(
+            1,
+            "Sweet Beet",
+            "Apple, carrot, beet, and lemon",
+            "Red",
+            4
+        )
+    )
 }
